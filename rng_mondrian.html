@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Random Machine — Mondrian</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E4373C;
+    --yellow: #FFD500;
+    --blue: #2D4DA4;
+    --black: #1B1B1B;
+    --cream: #F2EFE9;
+    --gap: 6px;
+    --accent: var(--blue);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    background: var(--black);
+    color: var(--black);
+  }
+
+  .canvas {
+    display: grid;
+    grid-template-columns: 210px 1fr 230px;
+    grid-template-rows: auto 1fr auto auto;
+    gap: var(--gap);
+    padding: var(--gap);
+    height: 100vh;
+    min-height: 640px;
+  }
+
+  .block { background: var(--cream); position: relative; }
+
+  /* ---------- HEADER ---------- */
+  .header { grid-column: 1 / 4; grid-row: 1; display: flex; align-items: center; justify-content: space-between; padding: 18px 26px; }
+  .wordmark { font-family: 'Archivo Black', 'Arial Black', sans-serif; font-size: 42px; letter-spacing: 2px; line-height: 0.95; }
+  .wordmark .sub { display: block; font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: 13px; letter-spacing: 8px; margin-top: 6px; color: #555; }
+  .accents { display: flex; align-items: center; gap: 14px; }
+  .acc-red { width: 64px; height: 64px; background: var(--red); }
+  .acc-blue { width: 64px; height: 64px; border-radius: 50%; background: var(--blue); }
+  .acc-yellow { width: 0; height: 0; border-left: 32px solid transparent; border-right: 32px solid transparent; border-bottom: 64px solid var(--yellow); }
+
+  /* ---------- MODES PANEL ---------- */
+  .modes { grid-column: 1; grid-row: 2; padding: 16px 12px; display: flex; flex-direction: column; }
+  .panel-title { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #777; margin: 0 8px 12px; }
+  .tab {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px; font-weight: 700; letter-spacing: 1px;
+    text-align: left; color: var(--black);
+    background: transparent; border: none; cursor: pointer;
+    padding: 14px 10px; margin: 2px 0;
+    display: flex; align-items: center; gap: 10px;
+    border-left: 5px solid transparent;
+    transition: transform 0.06s ease;
+  }
+  .tab .swatch { width: 14px; height: 14px; background: #ccc; flex: none; }
+  .tab:hover { background: #e9e4da; }
+  .tab:active { transform: scale(0.97); }
+  .tab.active { border-left-color: var(--black); }
+  .tab.active .swatch { width: 14px; height: 14px; }
+
+  /* ---------- RESULT PANEL ---------- */
+  .result { grid-column: 2; grid-row: 2; padding: 20px; display: flex; flex-direction: column; }
+  .result .tag { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #777; }
+  .output {
+    flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 22px;
+    border: 4px solid var(--black); margin: 14px 0 0; padding: 24px; min-height: 0; overflow: auto;
+    background: #fff;
+    border-top: 4px solid var(--accent);
+  }
+  .number {
+    font-family: 'Archivo Black', 'Arial Black', sans-serif;
+    font-size: 92px; line-height: 1; color: var(--black); text-align: center; word-break: break-all;
+  }
+  .dice-row { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .die {
+    width: 66px; height: 66px; border: 3px solid var(--black); background: #fff;
+    display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr);
+    padding: 8px;
+  }
+  .pip { margin: auto; width: 10px; height: 10px; border-radius: 50%; background: transparent; }
+  .pip.on { background: var(--black); }
+  .dice-total { font-family: 'Archivo Black', 'Arial Black', sans-serif; font-size: 22px; letter-spacing: 3px; margin-top: 14px; text-align: center; }
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .chip {
+    font-family: 'Archivo Black', 'Arial Black', sans-serif; font-size: 26px;
+    min-width: 58px; height: 58px; padding: 0 14px; display: flex; align-items: center; justify-content: center;
+    border: 3px solid var(--black); background: #fff;
+  }
+  .err { font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700; color: var(--red); letter-spacing: 1px; text-align: center; }
+  .repeats-note { font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #888; margin-top: 12px; }
+  .shake { animation: shake 0.4s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-6px); }
+    80% { transform: translateX(6px); }
+  }
+
+  /* ---------- CONTROLS PANEL ---------- */
+  .controls { grid-column: 3; grid-row: 2; padding: 16px; display: flex; flex-direction: column; gap: 18px; }
+  .field label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 3px; color: #777; margin-bottom: 6px; }
+  .field input {
+    width: 100%; font-family: 'Archivo Black', 'Arial Black', sans-serif; font-size: 22px;
+    border: 3px solid var(--black); background: #fff; padding: 10px 12px; color: var(--black); outline: none;
+  }
+  .field input:focus { border-color: var(--accent); }
+  .hint { font-size: 11px; color: #888; letter-spacing: 0.5px; margin-top: 6px; }
+  .hidden { display: none !important; }
+
+  /* ---------- HISTORY ---------- */
+  .history { grid-column: 1 / 4; grid-row: 3; padding: 12px 22px; display: flex; align-items: center; gap: 14px; min-height: 62px; }
+  .history .panel-title { margin: 0; white-space: nowrap; }
+  .hist-row { display: flex; gap: 8px; flex-wrap: wrap; overflow: hidden; }
+  .hist {
+    font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 13px; letter-spacing: 0.5px;
+    border: 2px solid var(--black); padding: 4px 10px; background: #fff; white-space: nowrap;
+  }
+  .hist b { font-family: 'Archivo Black', 'Arial Black', sans-serif; font-size: 14px; }
+
+  /* ---------- ROLL BAR ---------- */
+  .rollbar { grid-column: 1 / 4; grid-row: 4; }
+  .roll {
+    width: 100%; height: 100%; min-height: 74px; border: none; cursor: pointer;
+    background: var(--black); color: var(--cream);
+    font-family: 'Archivo Black', 'Arial Black', sans-serif; font-size: 34px; letter-spacing: 18px; text-indent: 18px;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+  .roll:hover { background: var(--accent); }
+  .roll:active { transform: scale(0.995); }
+  .roll:disabled { opacity: 0.55; cursor: wait; }
+
+  /* ---------- CONFETTI ---------- */
+  #confetti { position: fixed; inset: 0; pointer-events: none; z-index: 99; overflow: hidden; }
+  .conf { position: absolute; top: -30px; animation: fall linear forwards; }
+  @keyframes fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0.9; }
+  }
+
+  @media (max-width: 900px) {
+    .canvas { grid-template-columns: 1fr; grid-template-rows: auto auto auto auto auto; height: auto; }
+    .modes, .result, .controls { grid-column: 1; }
+    .modes { grid-row: 2; }
+    .result { grid-row: 3; min-height: 300px; }
+    .controls { grid-row: 4; }
+    .history { grid-column: 1; grid-row: 5; }
+    .rollbar { grid-column: 1; grid-row: 6; }
+    .number { font-size: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="canvas">
+
+  <!-- HEADER -->
+  <header class="block header">
+    <div class="wordmark">RANDOM<span class="sub">NUMBER MACHINE — 2026</span></div>
+    <div class="accents">
+      <div class="acc-red"></div>
+      <div class="acc-yellow"></div>
+      <div class="acc-blue"></div>
+    </div>
+  </header>
+
+  <!-- MODES -->
+  <nav class="block modes">
+    <div class="panel-title">MODE</div>
+    <button class="tab" data-mode="integer"><span class="swatch" style="background:#2D4DA4"></span>INTEGER</button>
+    <button class="tab" data-mode="float"><span class="swatch" style="background:#E4373C"></span>FLOAT</button>
+    <button class="tab" data-mode="dice"><span class="swatch" style="background:#FFD500"></span>DICE</button>
+    <button class="tab" data-mode="lottery"><span class="swatch" style="background:#1B1B1B"></span>LOTTERY</button>
+  </nav>
+
+  <!-- RESULT -->
+  <section class="block result">
+    <div class="tag"><span>OUTPUT</span><span id="modeLabel">INTEGER</span></div>
+    <div class="output" id="output">
+      <div class="number" id="number">—</div>
+    </div>
+  </section>
+
+  <!-- CONTROLS -->
+  <aside class="block controls">
+    <div class="field">
+      <label for="minInp">MINIMUM</label>
+      <input type="number" id="minInp" value="1">
+    </div>
+    <div class="field">
+      <label for="maxInp">MAXIMUM</label>
+      <input type="number" id="maxInp" value="100">
+    </div>
+    <div class="field" id="countField">
+      <label for="countInp" id="countLabel">NUMBERS TO PICK</label>
+      <input type="number" id="countInp" value="6" min="1" max="20">
+      <div class="hint" id="countHint"></div>
+    </div>
+  </aside>
+
+  <!-- HISTORY -->
+  <footer class="block history">
+    <div class="panel-title">RECENT</div>
+    <div class="hist-row" id="histRow"></div>
+  </footer>
+
+  <!-- ROLL BAR -->
+  <div class="block rollbar">
+    <button class="roll" id="rollBtn">ROLL</button>
+  </div>
+
+</div>
+
+<div id="confetti"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  const MODES = {
+    integer: { label: 'INTEGER', color: '#2D4DA4', usesCount: false },
+    float:   { label: 'FLOAT',   color: '#E4373C', usesCount: false },
+    dice:    { label: 'DICE',    color: '#FFD500', usesCount: true },
+    lottery: { label: 'LOTTERY', color: '#1B1B1B', usesCount: true }
+  };
+
+  const el = {
+    tabs: Array.from(document.querySelectorAll('.tab')),
+    output: document.getElementById('output'),
+    number: document.getElementById('number'),
+    modeLabel: document.getElementById('modeLabel'),
+    minInp: document.getElementById('minInp'),
+    maxInp: document.getElementById('maxInp'),
+    countField: document.getElementById('countField'),
+    countInp: document.getElementById('countInp'),
+    countLabel: document.getElementById('countLabel'),
+    countHint: document.getElementById('countHint'),
+    histRow: document.getElementById('histRow'),
+    rollBtn: document.getElementById('rollBtn'),
+    confetti: document.getElementById('confetti')
+  };
+
+  let mode = 'integer';
+  let animating = false;
+  let animTimer = null;
+  const history = [];
+
+  /* ---------------- SOUND (Web Audio, no files) ---------------- */
+  let AC = null;
+  function ensureAudio() {
+    if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
+    if (AC.state === 'suspended') AC.resume();
+    return AC;
+  }
+  function tone(freq, dur, type, vol, delay) {
+    try {
+      const ac = ensureAudio();
+      const t = ac.currentTime + (delay || 0);
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.type = type || 'sine';
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(vol || 0.12, t);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g); g.connect(ac.destination);
+      o.start(t); o.stop(t + dur + 0.03);
+    } catch (e) { /* audio unavailable */ }
+  }
+  const sClick  = function () { tone(820, 0.04, 'triangle', 0.07); };
+  const sTick   = function (delay) { tone(500 + Math.random() * 400, 0.03, 'square', 0.06, delay); };
+  const sThud   = function () { tone(130, 0.16, 'sine', 0.25); tone(70, 0.2, 'sine', 0.2); };
+  const sWin    = function () { [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.18, 'triangle', 0.12, i * 0.09)); };
+
+  /* ---------------- UI / MODE ---------------- */
+  function setMode(m, silent) {
+    mode = m;
+    const info = MODES[m];
+    document.documentElement.style.setProperty('--accent', info.color);
+
+    el.tabs.forEach(t => t.classList.toggle('active', t.dataset.mode === m));
+    el.modeLabel.textContent = info.label;
+    el.output.style.borderTopColor = info.color;
+
+    el.countField.classList.toggle('hidden', !info.usesCount);
+    if (info.usesCount) {
+      el.countLabel.textContent = (m === 'dice') ? 'HOW MANY DICE' : 'NUMBERS TO PICK';
+      el.countHint.textContent = (m === 'dice')
+        ? 'Max = number of sides (defaults to 6)'
+        : 'Pick N numbers from min to max (repeats allowed if N > pool)';
+      if (m === 'dice') { el.maxInp.value = 6; el.countInp.value = 1; }
+      else if (m === 'lottery') { el.countInp.value = 6; }
+    }
+    if (!silent) sClick();
+    renderResult(placeholder());
+  }
+
+  function placeholder() {
+    const number = document.createElement('div');
+    number.className = 'number';
+    number.textContent = '—';
+    return number;
+  }
+
+  function renderResult(node) {
+    el.output.innerHTML = '';
+    el.output.appendChild(node);
+  }
+
+  function fitResultNumber() {
+    const n = el.output.querySelector('.number');
+    if (!n) return;
+    n.style.width = '100%';
+    n.style.textAlign = 'center';
+    n.style.whiteSpace = 'nowrap';
+    n.style.wordBreak = 'normal';
+    const maxW = Math.max(40, n.clientWidth);
+    let size = parseFloat(window.getComputedStyle(n).fontSize) || 92;
+    n.style.fontSize = size + 'px';
+    while (n.scrollWidth > maxW && size > 14) {
+      size -= 1;
+      n.style.fontSize = size + 'px';
+    }
+    if (n.scrollWidth > maxW) {
+      n.style.whiteSpace = 'normal';
+      n.style.wordBreak = 'break-all';
+    }
+  }
+
+  /* ---------------- RENDERING ---------------- */
+  function sample() {
+    const min = parseInt(el.minInp.value, 10);
+    const max = parseInt(el.maxInp.value, 10);
+    if (isNaN(min) || isNaN(max) || min >= max) return null;
+
+    if (mode === 'integer') return { int: randomInt(min, max) };
+    if (mode === 'float')   return { float: randomFloat(min, max) };
+    if (mode === 'dice') {
+      const sides = max;
+      const count = clamp(parseInt(el.countInp.value, 10) || 1, 1, 10);
+      return { dice: Array.from({ length: count }, () => randomInt(1, sides)) };
+    }
+    const range = max - min + 1;
+    const count = clamp(parseInt(el.countInp.value, 10) || 1, 1, 20);
+    if (count > range) {
+      const seq = Array.from({ length: count }, () => randomInt(min, max));
+      return { chips: seq, repeats: true };
+    }
+    const picks = Array.from({ length: range }, (_, i) => min + i);
+    for (let i = picks.length - 1; i > 0; i--) {
+      const j = randomInt(0, i);
+      [picks[i], picks[j]] = [picks[j], picks[i]];
+    }
+    return { chips: picks.slice(0, count).sort((a, b) => a - b) };
+  }
+
+  function buildNode(s) {
+    const wrap = document.createElement('div');
+    if (s.dice) {
+      const row = document.createElement('div');
+      row.className = 'dice-row';
+      s.dice.forEach(v => {
+        const d = document.createElement('div');
+        d.className = 'die';
+        d.innerHTML = pipsHTML(v);
+        row.appendChild(d);
+      });
+      wrap.appendChild(row);
+      const total = document.createElement('div');
+      total.className = 'dice-total';
+      total.textContent = 'TOTAL ' + s.dice.reduce((a, b) => a + b, 0);
+      wrap.appendChild(total);
+    } else if (s.chips) {
+      const chips = document.createElement('div');
+      chips.className = 'chips';
+      s.chips.forEach(v => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.textContent = v;
+        chips.appendChild(c);
+      });
+      wrap.appendChild(chips);
+      if (s.repeats) {
+        const note = document.createElement('div');
+        note.className = 'repeats-note';
+        note.textContent = 'REPEATS ALLOWED — POOL TOO SMALL';
+        wrap.appendChild(note);
+      }
+    } else {
+      const n = document.createElement('div');
+      n.className = 'number';
+      n.textContent = (s.int !== undefined) ? s.int : s.float.toFixed(4);
+      wrap.appendChild(n);
+    }
+    return wrap;
+  }
+
+  function errorNode(msg) {
+    const e = document.createElement('div');
+    e.className = 'err';
+    e.textContent = msg;
+    return e;
+  }
+
+  const PIPS = {
+    1: [[0,0,0],[0,1,0],[0,0,0]],
+    2: [[1,0,0],[0,0,0],[0,0,1]],
+    3: [[1,0,0],[0,1,0],[0,0,1]],
+    4: [[1,0,1],[0,0,0],[1,0,1]],
+    5: [[1,0,1],[0,1,0],[1,0,1]],
+    6: [[1,0,1],[1,0,1],[1,0,1]]
+  };
+
+  function pipsHTML(v) {
+    let html = '';
+    PIPS[v].forEach(row => row.forEach(on => {
+      html += '<span class="pip' + (on ? ' on' : '') + '"></span>';
+    }));
+    return html;
+  }
+
+  /* ---------------- ROLL ---------------- */
+  function roll() {
+    if (animating) return;
+    const final = sample();
+    if (!final) {
+      el.output.classList.remove('shake');
+      void el.output.offsetWidth;
+      el.output.classList.add('shake');
+      renderResult(errorNode('MIN MUST BE LESS THAN MAX'));
+      tone(220, 0.12, 'sawtooth', 0.1);
+      return;
+    }
+    final.tag = MODES[mode].label.charAt(0);
+
+    animating = true;
+    el.rollBtn.disabled = true;
+    ensureAudio();
+
+    let steps = 0;
+    const STEP = 70, MAX_STEPS = 8;
+    for (let i = 0; i < 10; i++) sTick(i * 0.045);
+
+    animTimer = setInterval(() => {
+      renderResult(buildNode(sample()));
+      sTick();
+      steps++;
+      if (steps >= MAX_STEPS) {
+        clearInterval(animTimer);
+        animTimer = null;
+        renderResult(buildNode(final));
+        fitResultNumber();
+        sThud();
+        pushHistory(final);
+        if (mode === 'lottery') { sWin(); confetti(); }
+        animating = false;
+        el.rollBtn.disabled = false;
+      }
+    }, STEP);
+  }
+
+  /* ---------------- HISTORY ---------------- */
+  function pushHistory(s) {
+    history.unshift(s);
+    if (history.length > 8) history.pop();
+    el.histRow.innerHTML = '';
+    history.forEach(h => {
+      const chip = document.createElement('span');
+      chip.className = 'hist';
+      const label = h.tag || MODES[mode].label.charAt(0);
+      let val;
+      if (h.dice) val = h.dice.reduce((a, b) => a + b, 0) + ' (' + h.dice.join(',') + ')';
+      else if (h.chips) val = h.chips.join(',');
+      else if (h.float !== undefined) val = h.float.toFixed(4);
+      else val = h.int;
+      chip.innerHTML = '<b>' + label + '</b> ' + val;
+      el.histRow.appendChild(chip);
+    });
+  }
+
+  /* ---------------- CONFETTI ---------------- */
+  function confetti() {
+    const colors = ['#E4373C', '#FFD500', '#2D4DA4', '#1B1B1B'];
+    for (let i = 0; i < 60; i++) {
+      const c = document.createElement('div');
+      c.className = 'conf';
+      const size = 6 + Math.random() * 10;
+      const circle = Math.random() < 0.3;
+      c.style.left = (Math.random() * 100) + 'vw';
+      c.style.background = colors[randomInt(0, colors.length - 1)];
+      c.style.width = size + 'px';
+      c.style.height = size + 'px';
+      if (circle) c.style.borderRadius = '50%';
+      c.style.animationDuration = (1.4 + Math.random() * 1.4) + 's';
+      c.style.animationDelay = (Math.random() * 0.4) + 's';
+      el.confetti.appendChild(c);
+      setTimeout(() => c.remove(), 3200);
+    }
+  }
+
+  /* ---------------- HELPERS ---------------- */
+  function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function randomFloat(min, max) { return min + Math.random() * (max - min); }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  /* ---------------- WIRING ---------------- */
+  el.tabs.forEach(t => t.addEventListener('click', () => setMode(t.dataset.mode)));
+  el.rollBtn.addEventListener('click', roll);
+
+  setMode('integer', true);
+})();
+</script>
+</body>
+</html>
