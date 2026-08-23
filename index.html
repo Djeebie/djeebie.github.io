@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PLAY//DATA — Streaming Index 2010–2024</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-grid">
+    <div class="hero-title">
+      <h1>PLAY<span class="slash">//</span>DATA</h1>
+      <p class="hero-sub">a personal streaming index · 2010 – 2024</p>
+      <p class="hero-note">Composed in the spirit of De Stijl — grid, primary colour, and the straight line.</p>
+    </div>
+    <div class="hero-stats">
+      <div class="stat red">
+        <span class="stat-label">plays</span>
+        <span class="stat-num" data-count="308881">0</span>
+      </div>
+      <div class="stat yellow">
+        <span class="stat-label">hours</span>
+        <span class="stat-num" data-count="8311.3" data-decimals="1">0</span>
+      </div>
+      <div class="stat blue">
+        <span class="stat-label">artists</span>
+        <span class="stat-num" data-count="29339">0</span>
+      </div>
+      <div class="stat white">
+        <span class="stat-label">tracks</span>
+        <span class="stat-num" data-count="103931">0</span>
+      </div>
+      <div class="stat black">
+        <span class="stat-label">years</span>
+        <span class="stat-num" data-count="14.6" data-decimals="1">0</span>
+      </div>
+      <div class="stat white">
+        <span class="stat-label">albums</span>
+        <span class="stat-num" data-count="61987">0</span>
+      </div>
+      <div class="stat stat-wide red">
+        <span class="stat-label">skip rate</span>
+        <span class="stat-num" data-count="37.0" data-decimals="1">0</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ CONTEXT ============ -->
+<section class="context" id="context">
+  <div class="context-grid" id="contextGrid"></div>
+</section>
+
+<!-- ============ TREEMAP ============ -->
+<section class="block" id="treemap">
+  <div class="section-head">
+    <h2><span class="mark circle"></span> The Catalogue — Top 100 Artists</h2>
+    <p class="section-sub">A Mondrian composition. Tile area = total plays. Click a tile to isolate the artist's year-by-year listening.</p>
+  </div>
+  <div class="treemap-wrap" id="treemapWrap">
+    <svg id="treemapSvg" role="img" aria-label="Top artists treemap"></svg>
+    <div class="treemap-caption"><span class="cap-mark"></span>PLAYS — TOP 100 · LARGEST = MOST PLAYED</div>
+    <div class="artist-panel" id="artistPanel" hidden>
+      <button class="close" id="artistClose" aria-label="Close">×</button>
+      <h3 id="artistName">Artist</h3>
+      <div class="artist-meta" id="artistMeta"></div>
+      <svg id="artistSvg"></svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CHRONOLOGY ============ -->
+<section class="block" id="chronology">
+  <div class="section-head">
+    <h2><span class="mark square"></span> Chronology</h2>
+    <p class="section-sub">Plays and hours per year, with the year's most-played track.</p>
+  </div>
+  <div class="chrono-grid">
+    <svg id="chronoSvg"></svg>
+    <div class="year-panel">
+      <div class="year-list-head">
+        <span class="y">year</span>
+        <span class="trk">#1 track</span>
+        <span class="pl">plays</span>
+      </div>
+      <ol class="year-list" id="yearList"></ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ERAS ============ -->
+<section class="block" id="eras">
+  <div class="section-head">
+    <h2><span class="mark circle"></span> Eras</h2>
+    <p class="section-sub">When the most-played artists lived in your listening. Each bar spans first to last year of activity.</p>
+  </div>
+  <svg id="erasSvg" role="img" aria-label="Artist era timeline"></svg>
+</section>
+
+<!-- ============ SHELF ============ -->
+<section class="block" id="shelf">
+  <div class="section-head">
+    <h2><span class="mark square"></span> The Shelf</h2>
+    <p class="section-sub">Most-played albums. Hover for plays and hours.</p>
+  </div>
+  <svg id="albumsSvg" role="img" aria-label="Top albums"></svg>
+</section>
+
+<!-- ============ RHYTHM ============ -->
+<section class="block" id="rhythm">
+  <div class="section-head">
+    <h2><span class="mark triangle"></span> Rhythm</h2>
+    <p class="section-sub">Listening intensity by day of week and hour of day.</p>
+  </div>
+  <svg id="heatSvg"></svg>
+  <div class="rhythm-legend">
+    <span class="legend-label">fewer</span>
+    <span class="legend-cell c0"></span><span class="legend-cell c1"></span><span class="legend-cell c2"></span><span class="legend-cell c3"></span><span class="legend-cell c4"></span>
+    <span class="legend-label">more</span>
+  </div>
+</section>
+
+<!-- ============ HABITS ============ -->
+<section class="block" id="habits">
+  <div class="section-head">
+    <h2><span class="mark circle"></span> Habits &amp; Tools</h2>
+    <p class="section-sub">Completion, platforms and places. The machine behind the music.</p>
+  </div>
+  <div class="habits-grid">
+    <div class="habit-card">
+      <h4>Completion</h4>
+      <div class="bar-track"><div class="bar-fill black" id="completionBar"></div></div>
+      <p id="completionLabel"></p>
+    </div>
+    <div class="habit-card">
+      <h4>Shuffle</h4>
+      <div class="bar-track"><div class="bar-fill blue" id="shuffleBar"></div></div>
+      <p id="shuffleLabel"></p>
+    </div>
+    <div class="habit-card">
+      <h4>Skipped</h4>
+      <div class="bar-track"><div class="bar-fill red" id="skipBar"></div></div>
+      <p id="skipLabel"></p>
+    </div>
+    <div class="habit-card">
+      <h4>Platforms</h4>
+      <svg id="platformSvg"></svg>
+    </div>
+    <div class="habit-card">
+      <h4>Places</h4>
+      <svg id="countrySvg"></svg>
+    </div>
+    <div class="habit-card habit-meta">
+      <p><strong id="offlineNum"></strong> plays offline</p>
+      <p><strong id="incognitoNum"></strong> in incognito</p>
+      <p><strong id="podcastNum"></strong> podcast plays</p>
+      <p><strong id="videoNum"></strong> video plays <span class="dim" id="videoNote"></span></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-block red"><span class="footer-mark"></span></div>
+    <div class="footer-block white"><p>PLAY<span class="slash">//</span>DATA</p></div>
+    <div class="footer-block yellow"><p>Grid · colour · line</p></div>
+    <div class="footer-block black"><p class="footer-small">Built from Spotify Extended Streaming History.<br>All values aggregated, no raw events.</p></div>
+  </div>
+</footer>
+
+<div class="tooltip" id="tooltip" hidden></div>
+
+<script src="data.js"></script>
+<script src="dashboard.js"></script>
+</body>
+</html>
