@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Huttentocht 2027">
+  <rect width="64" height="64" rx="12" fill="#2f5d50"/>
+  <path d="M6 46 L24 18 L34 33 L41 23 L58 46 Z" fill="#eef3f0"/>
+  <path d="M24 18 L30 27 L27 30 L21 25 Z" fill="#d4662a"/>
+  <circle cx="46" cy="16" r="5" fill="#f2b134"/>
+</svg>
