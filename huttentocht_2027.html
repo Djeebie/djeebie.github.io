@@ -14,6 +14,7 @@
 
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
   <link rel="preload" as="image" href="assets/img/hero-lechtaler-alpen.jpg" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
@@ -36,6 +37,7 @@
         <ul>
           <li><a href="#tochten">Tochten</a></li>
           <li><a href="#vergelijk">Vergelijk</a></li>
+          <li><a href="#kaart">Kaart</a></li>
           <li><a href="#weer">Weer</a></li>
           <li><a href="#praktisch">Praktisch</a></li>
           <li><a href="#uitrusting">Uitrusting</a></li>
@@ -109,7 +111,7 @@
 
             <ul class="stats">
               <li><span>Loopdagen</span><b>3</b></li>
-              <li><span>Afstand</span><b>ca. 24 km</b></li>
+              <li><span>Afstand</span><b>ca. 21 km</b></li>
               <li><span>Stijgen / dalen</span><b>+1.700 / −1.800 m</b></li>
               <li><span>Hoogteband</span><b>1.300 – 2.632 m</b></li>
               <li><span>Zwaarte</span><b>T2–T3</b></li>
@@ -199,7 +201,7 @@
 
             <ul class="stats">
               <li><span>Loopdagen</span><b>3</b></li>
-              <li><span>Afstand</span><b>ca. 22 km</b></li>
+              <li><span>Afstand</span><b>ca. 24 km</b></li>
               <li><span>Stijgen / dalen</span><b>+1.600 / −1.800 m</b></li>
               <li><span>Hoogteband</span><b>1.100 – 2.697 m</b></li>
               <li><span>Zwaarte</span><b>T2–T3</b></li>
@@ -329,6 +331,42 @@
         <p class="compare-tip"><b>Gemengde groep? Kies de Verwallrunde.</b> Let wel: dag 3 daalt stevig
           (−1.286 m) — wandelstokken aanraden. Kies je de Höhenweg, overweeg dan een helm op dag 2 in verband
           met steinslag bij de beveiligde passages.</p>
+      </div>
+    </section>
+
+    <!-- KAART -->
+    <section id="kaart" class="section">
+      <div class="wrap">
+        <header class="section-head">
+          <h2>Routes op de kaart</h2>
+          <p>Bekijk beide routes en download het GPX-bestand voor je telefoon of horloge. De tracks volgen
+            OpenStreetMap-paden en zijn <b>indicatief</b> — navigeer met een officiële kaart/GPS en check de
+            actuele condities.</p>
+        </header>
+
+        <div class="route-maps">
+          <article class="route-map-panel">
+            <h3>Tocht 1 · Lechtaler Höhenweg</h3>
+            <div class="map" id="map-lechtal" role="img" aria-label="Kaart van de Lechtaler Höhenweg: Madau, Memminger Hütte, Grießlscharte, Ansbacher Hütte, Flirsch"></div>
+            <div class="route-actions">
+              <a class="btn btn-primary" href="assets/gpx/lechtaler-hoehenweg.gpx" download>Download GPX (Lechtal)</a>
+              <span class="route-meta">ca. 21 km · 2 hutten · 3 dagen</span>
+            </div>
+          </article>
+
+          <article class="route-map-panel">
+            <h3>Tocht 2 · Verwallrunde</h3>
+            <div class="map" id="map-verwall" role="img" aria-label="Kaart van de Verwallrunde: Kappl, Niederelbehütte, Schmalzgruben Scharte, Edmund-Graf-Hütte, Pettneu"></div>
+            <div class="route-actions">
+              <a class="btn btn-primary" href="assets/gpx/verwallrunde.gpx" download>Download GPX (Verwall)</a>
+              <span class="route-meta">ca. 24 km · 2 hutten · 3 dagen</span>
+            </div>
+          </article>
+        </div>
+
+        <p class="map-note">Kaart: © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>-bijdragers (ODbL).
+          De GPX-bestanden zijn gegenereerd uit OSM-data en volgen de gemarkeerde paden; beveiligde passages en
+          routewijzigingen zijn niet gegarandeerd.</p>
       </div>
     </section>
 
@@ -523,6 +561,7 @@
         <nav class="footer-nav" aria-label="Footermenu">
           <a href="#tochten">Tochten</a>
           <a href="#vergelijk">Vergelijk</a>
+          <a href="#kaart">Kaart</a>
           <a href="#weer">Weer</a>
           <a href="#praktisch">Praktisch</a>
           <a href="#uitrusting">Uitrusting</a>
@@ -553,6 +592,8 @@
     </div>
   </footer>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="assets/js/routes.js" defer></script>
   <script src="assets/js/main.js" defer></script>
 </body>
 </html>
