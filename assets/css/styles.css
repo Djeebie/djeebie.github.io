@@ -258,6 +258,7 @@ ul { margin: 0; padding: 0; }
 .weather-source { margin: .8rem 0 0; color: var(--muted); font-size: .82rem; }
 
 .weather-tables { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-bottom: 1.4rem; }
+.weather-period-block { min-width: 0; }
 .weather-period {
   margin: 0 0 .6rem; font-size: .85rem; text-transform: uppercase;
   letter-spacing: .08em; color: var(--pine);
