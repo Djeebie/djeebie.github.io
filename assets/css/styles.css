@@ -257,6 +257,14 @@ ul { margin: 0; padding: 0; }
 }
 .weather-source { margin: .8rem 0 0; color: var(--muted); font-size: .82rem; }
 
+.weather-tables { display: grid; grid-template-columns: 1fr; gap: 1.4rem; margin-bottom: 1.4rem; }
+.weather-period {
+  margin: 0 0 .6rem; font-size: .85rem; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--pine);
+}
+.weather-tables .weather-table-wrap { margin-bottom: 0; }
+.tour-period { margin: 0 0 1.4rem; font-weight: 700; color: var(--pine); font-size: .95rem; }
+
 .tour-weather {
   margin: 0 0 .5rem; color: var(--muted); font-size: .92rem;
   border-left: 3px solid var(--sun); padding-left: .8rem;
@@ -306,6 +314,7 @@ ul { margin: 0; padding: 0; }
   .cards { grid-template-columns: repeat(2, 1fr); }
   .pack-grid { grid-template-columns: repeat(2, 1fr); }
   .gallery { grid-template-columns: repeat(3, 1fr); }
+  .weather-tables { grid-template-columns: 1fr 1fr; }
 }
 
 @media (min-width: 900px) {
