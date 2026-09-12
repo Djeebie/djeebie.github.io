@@ -34,6 +34,6 @@
   // Jaartal in de footer
   var year = document.getElementById("year");
   if (year) {
-    year.textContent = "© " + new Date().getFullYear() + " Huttentocht";
+    year.textContent = "© " + new Date().getFullYear() + " Geurt's huttentocht";
   }
 })();
