@@ -54,15 +54,38 @@
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>-bijdragers'
       }).addTo(map);
+
+      // Hoofdroute + waypoints
+      var mainLayer = window.L.layerGroup();
       var line = window.L.polyline(route.points, {
         color: route.color, weight: 4, opacity: 0.9
-      }).addTo(map);
+      }).addTo(mainLayer);
       route.waypoints.forEach(function (w) {
         window.L.circleMarker([w.lat, w.lng], {
           radius: 5, color: "#fff", weight: 2, fillColor: route.color, fillOpacity: 1
-        }).addTo(map).bindPopup(w.name);
+        }).addTo(mainLayer).bindPopup(w.name);
       });
-      map.fitBounds(line.getBounds(), { padding: [26, 26] });
+      mainLayer.addTo(map);
+
+      // Vlucht-/uitwijkroutes (gestippeld)
+      var escLayer = window.L.layerGroup();
+      (route.escapes || []).forEach(function (e) {
+        window.L.polyline(e.points, {
+          color: "#6b7b72", weight: 3, opacity: 0.9, dashArray: "6 7"
+        }).addTo(escLayer).bindPopup(e.name);
+      });
+      escLayer.addTo(map);
+
+      // Inzoomen op het geheel
+      var bounds = line.getBounds();
+      (route.escapes || []).forEach(function (e) { bounds.extend(window.L.latLngBounds(e.points)); });
+      map.fitBounds(bounds, { padding: [26, 26] });
+
+      window.L.control.layers(null, {
+        "Hoofdroute": mainLayer,
+        "Vluchtroutes": escLayer
+      }, { collapsed: window.innerWidth < 700, position: "topright" }).addTo(map);
+
       window.setTimeout(function () { map.invalidateSize(); }, 250);
     });
   }

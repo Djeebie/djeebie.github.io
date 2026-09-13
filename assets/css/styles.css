@@ -326,6 +326,25 @@ ul { margin: 0; padding: 0; }
 .map-note { margin-top: 1.4rem; color: var(--muted); font-size: .85rem; }
 .map-note a { color: var(--pine); }
 
+/* ---------- Noodplan ---------- */
+.noodplan { background: #eef3f0; }
+.nood-route {
+  margin: 2rem 0 .8rem; font-size: clamp(1.1rem, 2.6vw, 1.35rem);
+  color: var(--pine); border-bottom: 2px solid rgba(47, 93, 80, .2); padding-bottom: .4rem;
+}
+.nood-table-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow-sm); margin-bottom: 1rem; }
+.nood-table { width: 100%; border-collapse: collapse; background: var(--card); font-size: .92rem; min-width: 680px; }
+.nood-table th, .nood-table td { padding: .75rem .9rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.nood-table thead th { background: var(--pine); color: #fff; font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; }
+.nood-table tbody th { font-weight: 700; color: var(--ink); background: #fbfaf7; }
+.nood-table tbody tr:nth-child(even) td { background: #fbfaf7; }
+.nood-table tbody tr:last-child th, .nood-table tbody tr:last-child td { border-bottom: 0; }
+.nood-planb { border-left: 3px solid var(--accent); padding-left: .9rem; color: var(--ink); }
+.nood-extra { color: var(--muted); font-size: .92rem; }
+.nood-actions { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.6rem; }
+.btn-ghost-dark { background: transparent; color: var(--pine); border: 1px solid var(--pine); }
+.btn-ghost-dark:hover { background: var(--pine); color: #fff; }
+
 /* ---------- Responsive ---------- */
 @media (min-width: 640px) {
   .stats { grid-template-columns: repeat(3, 1fr); }
