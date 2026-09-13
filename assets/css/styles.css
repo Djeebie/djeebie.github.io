@@ -345,6 +345,25 @@ ul { margin: 0; padding: 0; }
 .btn-ghost-dark { background: transparent; color: var(--pine); border: 1px solid var(--pine); }
 .btn-ghost-dark:hover { background: var(--pine); color: #fff; }
 
+/* ---------- Afspraken (in Praktisch) ---------- */
+.sub-block {
+  margin: 3rem 0 1.4rem; padding-top: 1.6rem; border-top: 1px solid var(--line);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+.rules-block { margin-top: 1.6rem; }
+.rules-block h3 { font-size: 1.2rem; }
+.rules-block h3 span { color: var(--muted); font-weight: 500; font-size: .88rem; }
+.rules-list { list-style: none; counter-reset: r; display: grid; gap: .6rem; margin: 0; padding: 0; }
+.rules-list li { position: relative; padding-left: 2.4rem; color: var(--muted); }
+.rules-list li::before {
+  counter-increment: r; content: counter(r); position: absolute; left: 0; top: .05em;
+  width: 1.7rem; height: 1.7rem; border-radius: 50%; background: var(--pine); color: #fff;
+  font-size: .8rem; font-weight: 700; display: flex; align-items: center; justify-content: center;
+}
+.rules-list b { color: var(--ink); }
+.source-note { margin: .9rem 0 0; color: var(--muted); font-size: .82rem; }
+.source-note a { color: var(--pine); }
+
 /* ---------- Responsive ---------- */
 @media (min-width: 640px) {
   .stats { grid-template-columns: repeat(3, 1fr); }
